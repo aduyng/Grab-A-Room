@@ -8,6 +8,12 @@ import App from './components/App/App';
 import reportWebVitals from './reportWebVitals';
 import theme from "./theme"
 import {ThemeProvider} from "@mui/material";
+import { initializeApp } from "firebase/app";
+import "firebase/storage";
+import "firebase/database";
+import {FIREBASE_CONFIG} from "./consts";
+
+initializeApp(FIREBASE_CONFIG);
 
 ReactDOM.render(
     <React.StrictMode>
