@@ -1,0 +1,35 @@
+{
+  "name": "@aduyng/grab-a-room",
+  "version": "1.0.0",
+  "description": "Using image recognition to detect the room number and quickly book it for meeting with outlook API",
+  "main": "eslintrc.js",
+  "dependencies": {
+    "create-react-app": "^4.0.3",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-typescript": "^14.0.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.26.1",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "eslint-plugin-jest": "^25.2.2",
+    "prettier": "^2.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "ui:format": "prettier --write ui/src/**/*.ts{,x}",
+    "ui:lint": "tsc -p ./ui/tsconfig.json --noEmit && eslint ui/src/**/*.ts{,x}"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aduyng/Grab-A-Room.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aduyng/Grab-A-Room/issues"
+  },
+  "homepage": "https://github.com/aduyng/Grab-A-Room#readme"
+}
