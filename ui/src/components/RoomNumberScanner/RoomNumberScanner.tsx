@@ -21,18 +21,21 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
 
 export type RoomNumberScannerProps = {
     className: string;
-    onChange: ({roomNumber}: { roomNumber: string }) => void
+    onChange: ({roomNumber}: { roomNumber: string }) => void;
+    value: string;
 }
 
-export default function RoomNumberScanner({className, onChange}: RoomNumberScannerProps) {
-    const [roomNumber, setRoomNumber] = useState<string>("");
+export default function RoomNumberScanner({className, onChange, value}: RoomNumberScannerProps) {
+    const [roomNumber, setRoomNumber] = useState<string>(value || "");
     const [isDecoding, setIsDecoding] = useState<boolean>(false);
 
     const imageInputRef = createRef<HTMLInputElement>();
     const classes = useStyles();
 
     const onRoomNumberChange = (event: ChangeEvent) => {
-        setRoomNumber((event.target as HTMLInputElement).value)
+        const newRoomNumber = (event.target as HTMLInputElement).value
+        setRoomNumber(newRoomNumber);
+        onChange({roomNumber: newRoomNumber})
     }
 
     const onScanButtonClick = () => {

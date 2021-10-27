@@ -8,17 +8,48 @@ import App from './components/App/App';
 import reportWebVitals from './reportWebVitals';
 import theme from "./theme"
 import {ThemeProvider} from "@mui/material";
-import { initializeApp } from "firebase/app";
+import {initializeApp} from "firebase/app";
 import "firebase/storage";
 import "firebase/database";
-import {FIREBASE_CONFIG} from "./consts";
+import {
+    PublicClientApplication,
+    EventType,
+    EventMessage,
+    AuthenticationResult
+} from '@azure/msal-browser';
+
+import {FIREBASE_CONFIG, MS_CONFIG} from "./consts";
+
+const msalInstance = new PublicClientApplication({
+    auth: {
+        clientId: MS_CONFIG.appId,
+        redirectUri: MS_CONFIG.redirectUri,
+        authority: `https://login.microsoftonline.com/${MS_CONFIG.tenantId}`
+    },
+    cache: {
+        cacheLocation: 'localStorage',
+        storeAuthStateInCookie: true
+    }
+});
+
+const accounts = msalInstance.getAllAccounts();
+if (accounts && accounts.length > 0) {
+    msalInstance.setActiveAccount(accounts[0]);
+}
+
+msalInstance.addEventCallback((event: EventMessage) => {
+    if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
+        const authResult = event.payload as AuthenticationResult;
+        msalInstance.setActiveAccount(authResult.account);
+    }
+});
 
 initializeApp(FIREBASE_CONFIG);
 
 ReactDOM.render(
     <React.StrictMode>
         <ThemeProvider theme={theme}>
-            <App/>
+            <App pca={msalInstance}/>
         </ThemeProvider>
     </React.StrictMode>,
     document.getElementById('root')

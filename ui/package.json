@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@azure/msal-browser": "^2.18.0",
+    "@azure/msal-react": "^1.1.0",
     "@emotion/react": "^11.5.0",
     "@emotion/styled": "^11.3.0",
     "@fontsource/roboto": "^4.5.1",
+    "@microsoft/microsoft-graph-client": "^3.0.0",
     "@mui/icons-material": "^5.0.4",
     "@mui/material": "^5.0.4",
     "@mui/styles": "^5.0.1",
@@ -16,7 +19,9 @@
     "@types/node": "^12.20.34",
     "@types/react": "^17.0.31",
     "@types/react-dom": "^17.0.10",
+    "date-fns": "^2.25.0",
     "firebase": "^9.1.3",
+    "lodash": "^4.17.21",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-html5-camera-photo": "^1.5.5",
@@ -50,6 +55,8 @@
     ]
   },
   "devDependencies": {
+    "@microsoft/microsoft-graph-types": "^2.8.0",
+    "@types/lodash": "^4.14.176",
     "@types/react-html5-camera-photo": "^1.5.1",
     "@types/react-router-dom": "^5.3.1"
   }

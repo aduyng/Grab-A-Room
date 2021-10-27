@@ -5,11 +5,11 @@ import CssBaseline from "@mui/material/CssBaseline";
 import AppBar from "../AppBar/AppBar";
 import Main from "../Main/Main";
 
-interface LayoutProps {
+interface MainLayoutProps {
     children?: React.ReactNode
 }
 
-export default function Layout({children}: LayoutProps) {
+export default function MainLayout({children}: MainLayoutProps) {
     const [isDrawerOpen, setDrawerOpen] = useState(false);
 
     const onDrawerToggle = () => {
