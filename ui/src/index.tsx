@@ -59,3 +59,12 @@ ReactDOM.render(
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
+
+// TODO: add to home screen shortcut on mobile device - 1
+// TODO: validation for home screen - 1
+// TODO: showing response message via toast - 1
+// TODO: showing current user name - 2
+// TODO: design a logo - 1
+// TODO: integrate correct prettier & eslint - 3
+// TODO: create video - 1
+// TODO: create presentation (easy to use, no installation required) - 1

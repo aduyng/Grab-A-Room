@@ -13,10 +13,10 @@ export default function createEvent(authProvider: AuthCodeMSALBrowserAuthenticat
     const roomEmailAddress = `${roomName}@sabre.com`;
 
     const event = {
-        subject: 'Adhoc Meeting',
+        subject: 'Ad hoc Meeting',
         body: {
             contentType: 'HTML',
-            content: 'Adhoc Meeting'
+            content: 'Ad hoc Meeting'
         },
         start: {
             dateTime: start,
