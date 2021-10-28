@@ -28,7 +28,9 @@ function ConfiguredApp() {
     }
     return (
         <CenteredLayout>
-            <Button variant={"contained"} onClick={app.signIn!} startIcon={<LoginOutlined />}>SIGN IN</Button>
+            <Button variant={"contained"}
+                    fullWidth
+                    onClick={app.signIn!} startIcon={<LoginOutlined/>}>SIGN IN</Button>
         </CenteredLayout>
     )
 }

@@ -3,22 +3,23 @@ import React, {
     createContext,
     useState,
     MouseEventHandler,
-    useEffect
+    useEffect, useMemo
 } from 'react';
 
 import {AuthCodeMSALBrowserAuthenticationProvider} from '@microsoft/microsoft-graph-client/authProviders/authCodeMsalBrowser';
 import {InteractionType, PublicClientApplication} from '@azure/msal-browser';
 import {useMsal} from '@azure/msal-react';
 import {MS_CONFIG} from "../consts";
-import {getUser, UserWithAvatar} from "../services/ms/getUser";
+import {getUser, UserProfile} from "../services/ms/getUser";
 
 export interface AppError {
     message: string,
     debug?: string
 }
 
+
 type AppContext = {
-    user?: UserWithAvatar;
+    user?: UserProfile;
     error?: AppError;
     signIn?: MouseEventHandler<HTMLElement>;
     signOut?: MouseEventHandler<HTMLElement>;
@@ -56,8 +57,17 @@ export default function ProvideAppContext({children}: ProvideAppContextProps) {
 
 function useProvideAppContext() {
     const msal = useMsal();
-    const [user, setUser] = useState<UserWithAvatar | undefined>(undefined);
+    const [user, setUser] = useState<UserProfile | undefined>(undefined);
     const [error, setError] = useState<AppError | undefined>(undefined);
+
+    const authProvider = useMemo(() => new AuthCodeMSALBrowserAuthenticationProvider(
+        msal.instance as PublicClientApplication,
+        {
+            account: msal.instance.getActiveAccount()!,
+            scopes: MS_CONFIG.scopes,
+            interactionType: InteractionType.Popup
+        }
+    ), [msal.instance]);
 
     useEffect(() => {
         const checkUser = async () => {
@@ -76,7 +86,7 @@ function useProvideAppContext() {
             }
         };
         checkUser();
-    });
+    }, [authProvider, msal.instance, user]);
 
     const displayError = (message: string, debug?: string) => {
         setError({message, debug});
@@ -86,14 +96,7 @@ function useProvideAppContext() {
         setError(undefined);
     }
 
-    const authProvider = new AuthCodeMSALBrowserAuthenticationProvider(
-        msal.instance as PublicClientApplication,
-        {
-            account: msal.instance.getActiveAccount()!,
-            scopes: MS_CONFIG.scopes,
-            interactionType: InteractionType.Popup
-        }
-    );
+
 
     const signIn = async () => {
         await msal.instance.loginPopup({
@@ -102,7 +105,6 @@ function useProvideAppContext() {
         });
 
         const user = await getUser(authProvider);
-
         setUser(user);
     };
 

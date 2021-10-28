@@ -1,17 +1,19 @@
-import React, {ChangeEvent, MouseEvent, useEffect, useState} from "react";
+import React, {ChangeEvent, MouseEvent, useState} from "react";
 import {createStyles, makeStyles} from "@mui/styles";
 import {Theme} from "@mui/material/styles/createTheme";
 import Button from "@mui/material/Button";
 import EventAvailable from "@mui/icons-material/EventAvailable";
 import Paper from "@mui/material/Paper";
 import RoomNumberScanner from "../../components/RoomNumberScanner/RoomNumberScanner";
-import {BLUEPRINT, Building, Campus, Floor} from "../../consts";
-import CampusSelector from "../../components/CampusSelector/CampusSelector";
-import BuildingSelector from "../../components/BuildingSelector/BuildingSelector";
-import FloorSelector from "../../components/FloorSelector/FloorSelector";
 import DurationSelector from "../../components/DurationSelector/DurationSelector";
 import {useAppContext} from "../../contexts/AppContext";
 import createEvent from "../../services/ms/createEvent";
+import {useSnackbar} from 'notistack';
+import findRoom from "./findRoom";
+import {Room} from "../../consts";
+import RoomNumberInput from "../../components/RoomNumberInput/RoomNumberInput";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     paper: {
@@ -24,100 +26,131 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     bookNowButton: {
         marginTop: theme.spacing(2)
     },
+    scanButton: {
+        marginBottom: theme.spacing(2)
+    }
 }));
 
 export default function HomePage() {
-    const app = useAppContext();
+    const {authProvider, user} = useAppContext();
+
     // TODO: get from settings
-    const [building, setBuilding] = useState<Building>(BLUEPRINT[0].buildings[0]);
-    const [floor, setFloor] = useState<Floor>(BLUEPRINT[0].buildings[0].floors[0]);
-    const [campus, setCampus] = useState<Campus>(BLUEPRINT[0]);
     const [duration, setDuration] = useState<number>(30);
-    const [detectedRoomNumber, setDetectedRoomNumber] = useState<string>("");
+    const [roomNumber, setRoomNumber] = useState<string>("");
+    const [isReserving, setIsReserving] = useState<boolean>(false);
+    const [isRoomNumberDecoding, setIsRoomNumberDecoding] = useState<boolean>(false);
+    const [room, setRoom] = useState<Room | null>(null);
+    const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+
     const classes = useStyles();
 
-    useEffect(() => {
-        setBuilding(campus.buildings[0])
-    }, [campus])
-
-    const onCampusChange = (event: ChangeEvent) => {
-        const campusId = (event.target as HTMLInputElement).value;
-        const newCampus = BLUEPRINT.find(c => c.id === campusId);
-        if (newCampus) {
-            setCampus(newCampus);
-            setBuilding(newCampus.buildings[0]);
-            setFloor(newCampus.buildings[0].floors[0]);
-        }
-    }
-
-    const onBuildingChange = (event: ChangeEvent) => {
-        const buildingId = (event.target as HTMLInputElement).value;
-        const newBuilding = campus.buildings.find(c => c.id === buildingId);
-        if (newBuilding) {
-            setBuilding(newBuilding);
-            setFloor(newBuilding.floors[0]);
-        }
-    }
     const onDurationChange = (event: ChangeEvent) => {
         const value = (event.target as HTMLInputElement).value;
         setDuration(parseInt(value, 10));
     }
 
-    const onRoomNumberChange = ({roomNumber}: { roomNumber: string }) => {
-        setDetectedRoomNumber(roomNumber);
+    const onRoomNumberChange = (term: string) => {
+        const matchingRoom = findRoom(user!.rooms, term);
+        if (matchingRoom) {
+            setRoom(matchingRoom);
+        }
     }
 
-    const onBookNowClick = (event: MouseEvent) => {
+    const onRoomNumberDecoded = ({rawText}: { rawText: string | null }) => {
+        setIsRoomNumberDecoding(false);
+
+        if (!rawText) {
+            enqueueSnackbar("Failed to decode the captured image. Please try again!", {
+                variant: "error",
+            });
+            return;
+        }
+
+        const matchingRoom = findRoom(user!.rooms, rawText);
+        if (matchingRoom) {
+            setRoom(matchingRoom);
+            setRoomNumber(matchingRoom?.name);
+            enqueueSnackbar("Decoding completed. The room is found.", {
+                variant: "info",
+            });
+        } else {
+            enqueueSnackbar(`The room is not found`, {
+                variant: "error",
+            });
+            setRoomNumber(rawText);
+        }
+    }
+
+    const onBookNowClick = async (event: MouseEvent) => {
         event.preventDefault();
-        createEvent(app.authProvider!, campus, building, floor, detectedRoomNumber, new Date(), duration);
+        setIsReserving(true);
+        let key = enqueueSnackbar("Reserving the room and confirming the availability. Please wait...", {
+            variant: "info",
+            persist: true
+        });
+
+        try {
+            await createEvent(authProvider!,
+                room!,
+                new Date(), duration);
+            closeSnackbar(key);
+
+            enqueueSnackbar("The room has successfully reserved. Have a productive meeting!", {
+                variant: "success",
+                persist: false
+            })
+        } catch (error) {
+            closeSnackbar(key);
+            enqueueSnackbar(`Failed to reserve the room. There might have been a conflict. response: "${error}"`, {
+                variant: "error",
+                persist: false
+            })
+        }
+        setIsReserving(false);
     }
 
+    const onRoomNumberDecoding = () => {
+        setIsRoomNumberDecoding(true);
+        enqueueSnackbar("Decoding the room number from the picture. Please wait...", {
+            variant: "info",
+        });
+    }
     return (
-        <Paper className={classes.paper}>
-            <CampusSelector
-                row
-                className={classes.inputGroup}
-                value={campus.id}
-                campuses={BLUEPRINT}
-                onChange={onCampusChange}
-            />
-            <BuildingSelector
-                row
-                className={classes.inputGroup}
-                value={building.id}
-                buildings={campus.buildings}
-                onChange={onBuildingChange}
-            />
+        <Box>
+            <Typography variant={"h2"} gutterBottom>Grab-A-Room</Typography>
+            <Paper className={classes.paper}>
 
-            <FloorSelector
-                row
-                className={classes.inputGroup}
-                value={floor.id}
-                floors={building.floors}
-            />
+                <RoomNumberScanner
+                    className={classes.scanButton}
+                    onDecoding={onRoomNumberDecoding}
+                    onDecoded={onRoomNumberDecoded}
+                    disabled={isReserving || isRoomNumberDecoding}
+                />
+
+                <RoomNumberInput className={classes.inputGroup}
+                                 value={roomNumber}
+                                 disabled={isReserving || isRoomNumberDecoding}
+                                 onChange={onRoomNumberChange}/>
 
 
-            <DurationSelector
-                row
-                className={classes.inputGroup}
-                value={duration.toString()}
-                onChange={onDurationChange}
-            />
+                <DurationSelector
+                    row
+                    className={classes.inputGroup}
+                    value={duration.toString()}
+                    onChange={onDurationChange}
+                    disabled={isReserving || isRoomNumberDecoding}
+                />
 
-            <RoomNumberScanner
-                className={classes.inputGroup}
-                onChange={onRoomNumberChange}
-                value={detectedRoomNumber}
-            />
-
-            <Button
-                fullWidth variant={"contained"}
-                size={"large"}
-                className={classes.bookNowButton}
-                color={"primary"}
-                startIcon={<EventAvailable/>}
-                onClick={onBookNowClick}
-            >Book Now</Button>
-        </Paper>
+                <Button
+                    fullWidth variant={"contained"}
+                    size={"large"}
+                    className={classes.bookNowButton}
+                    color={"primary"}
+                    startIcon={<EventAvailable/>}
+                    onClick={onBookNowClick}
+                    disabled={isReserving || isRoomNumberDecoding || !room}
+                >Book Now</Button>
+            </Paper>
+        </Box>
     )
 }

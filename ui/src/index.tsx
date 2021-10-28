@@ -11,6 +11,8 @@ import {ThemeProvider} from "@mui/material";
 import {initializeApp} from "firebase/app";
 import "firebase/storage";
 import "firebase/database";
+// @ts-ignore
+import AddToHomeScreen from '@ideasio/add-to-homescreen-react';
 import {
     PublicClientApplication,
     EventType,
@@ -48,6 +50,7 @@ initializeApp(FIREBASE_CONFIG);
 
 ReactDOM.render(
     <React.StrictMode>
+        <AddToHomeScreen />
         <ThemeProvider theme={theme}>
             <App pca={msalInstance}/>
         </ThemeProvider>
@@ -60,11 +63,15 @@ ReactDOM.render(
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
 
+// DONE: round the start time and end time for each 15-minute block - 1
+// DONE: interpret the floor and building from room number / name - 1
+// DONE: room availability check (from response) - 1
 // TODO: add to home screen shortcut on mobile device - 1
-// TODO: validation for home screen - 1
-// TODO: showing response message via toast - 1
+// DONE: validation for home screen - 1
+// DONE: showing response message via toast - 1
 // TODO: showing current user name - 2
-// TODO: design a logo - 1
+// TODO: design a logo - 1 (square logo 512px, PNG)
 // TODO: integrate correct prettier & eslint - 3
 // TODO: create video - 1
 // TODO: create presentation (easy to use, no installation required) - 1
+// TODO: cache resources using WPA - 3

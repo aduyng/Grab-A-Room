@@ -18,7 +18,11 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
     }
 }));
 
-export default function DurationSelector({onChange, value, className, ...rest}: RadioGroupProps) {
+interface DurationSelectorProps extends RadioGroupProps {
+    disabled: boolean;
+}
+
+export default function DurationSelector({onChange, value, className, disabled, ...rest}: DurationSelectorProps) {
     const classes = useStyles();
     return (
         <FormControl component="fieldset" className={className}>
@@ -33,6 +37,7 @@ export default function DurationSelector({onChange, value, className, ...rest}: 
                         <FormControlLabel
                             key={minutes.toString()}
                             className={classes.radio}
+                            disabled={disabled}
                             value={minutes} control={<Radio/>} label={formatDuration(intervalToDuration({
                             start: 0,
                             end: minutes * 60 * 1000
