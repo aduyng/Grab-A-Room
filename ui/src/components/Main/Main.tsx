@@ -9,14 +9,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
             ? theme.palette.grey[100]
             : theme.palette.grey[900],
         flexGrow: 1,
-        height: '100vh',
         overflow: 'auto',
-        padding: theme.spacing(1)
+        padding: 0,
+        margin: 0
     }
 }));
 
 interface MainProps {
-    children?: React.ReactNode
+    children?: React.ReactNode;
 }
 
 export default function Main({children}: MainProps) {

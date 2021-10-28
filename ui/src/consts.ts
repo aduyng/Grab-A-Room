@@ -12,8 +12,7 @@ export const FIREBASE_CONFIG = {
 
 export const MS_CONFIG = {
     appId: '6bda45a7-a1d3-4298-bcc6-f0e50c86bd85',
-    redirectUri: 'https://grab-a-room.web.app',
-    // redirectUri: 'http://localhost:3000',
+    redirectUri: window.location.origin,
     tenantId: '03ceccf2-fe27-4c66-abdb-699141848e61',
     scopes: [
         'user.read',

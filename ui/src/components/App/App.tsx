@@ -1,10 +1,10 @@
 import React from 'react';
 import ProvideAppContext from "../../contexts/AppContext";
-import ConfiguredApp from "../ConfiguredApp/ConfiguredApp";
 import {IPublicClientApplication} from "@azure/msal-browser";
 import {MsalProvider} from "@azure/msal-react";
 import {SnackbarProvider} from 'notistack';
 import Grow from "@mui/material/Grow";
+import ConfiguredApp from "../ConfiguredApp/ConfiguredApp";
 
 type AppProps = {
     pca: IPublicClientApplication
@@ -21,7 +21,7 @@ function App({pca}: AppProps) {
                           preventDuplicate={true}>
             <MsalProvider instance={pca}>
                 <ProvideAppContext>
-                    <ConfiguredApp/>
+                    <ConfiguredApp />
                 </ProvideAppContext>
             </MsalProvider>
         </SnackbarProvider>

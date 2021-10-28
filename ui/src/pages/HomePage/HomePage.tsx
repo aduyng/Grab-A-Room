@@ -12,8 +12,7 @@ import {useSnackbar} from 'notistack';
 import findRoom from "./findRoom";
 import {Room} from "../../consts";
 import RoomNumberInput from "../../components/RoomNumberInput/RoomNumberInput";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
+import MainLayout from "../../components/MainLayout/MainLayout";
 
 const useStyles = makeStyles((theme: Theme) => createStyles({
     paper: {
@@ -116,10 +115,8 @@ export default function HomePage() {
         });
     }
     return (
-        <Box>
-            <Typography variant={"h2"} gutterBottom>Grab-A-Room</Typography>
+        <MainLayout>
             <Paper className={classes.paper}>
-
                 <RoomNumberScanner
                     className={classes.scanButton}
                     onDecoding={onRoomNumberDecoding}
@@ -151,6 +148,6 @@ export default function HomePage() {
                     disabled={isReserving || isRoomNumberDecoding || !room}
                 >Book Now</Button>
             </Paper>
-        </Box>
+        </MainLayout>
     )
 }
