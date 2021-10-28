@@ -20,14 +20,14 @@ const useStyles = makeStyles((theme: Theme) => createStyles({
         padding: theme.spacing(2)
     },
     inputGroup: {
-        marginTop: theme.spacing(1),
+        marginTop: '.5rem !important',
         display: "flex"
     },
     bookNowButton: {
         marginTop: theme.spacing(2)
     },
     scanButton: {
-        marginBottom: theme.spacing(2)
+        marginBottom: theme.spacing(1)
     }
 }));
 
